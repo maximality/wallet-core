@@ -52,6 +52,7 @@ targets:
       CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION: YES_ERROR
       CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER: $(inherited) false
       OTHER_CFLAGS: $(inherited) -Wno-comma -DNDEBUG
+      SWIFT_SERIALIZE_DEBUGGING_OPTIONS: false
     postCompileScripts:
       - script: |
           export PATH=/opt/homebrew/bin:$PATH; 
