@@ -8,6 +8,44 @@ platform :ios do
     core_xcframework
   end
 
+  desc "create libprotobuf xcframework"
+  lane :protobuf_xcframework do
+    create_xcframework(
+      workspace: 'TrustWalletCore.xcworkspace',
+      scheme: 'protobuf',
+      destinations: ['iOS'],
+      xcframework_output_directory: 'build',
+      enable_bitcode: false,
+      product_name: 'libprotobuf'
+    )
+  end
+
+  # Use this to compile frameworks
+  # xcodebuild archive \
+  #   -workspace TrustWalletCore.xcworkspace \
+  #   -scheme protobuf \
+  #   -destination "generic/platform=iOS" \
+  #   -archivePath "build/libprotobuf-ios" \
+  #   SKIP_INSTALL=NO \
+  #   BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+
+  # xcodebuild -create-xcframework \
+  #   -library "/Users/mmd/Desktop/everything/Work/GIT/trust-wallet-core/swift/build/libprotobuf-ios.xcarchive/Products/usr/local/lib/libprotobuf.a" \
+  #   -library "/Users/mmd/Desktop/everything/Work/GIT/trust-wallet-core/swift/build/libprotobuf-simulator.xcarchive/Products/usr/local/lib/libprotobuf.a" \
+  #   -output libprotobuf.xcframework
+
+  desc "create libtrezor-crypto xcframework"
+  lane :trezor_xcframework do
+    create_xcframework(
+      workspace: 'TrustWalletCore.xcworkspace',
+      scheme: 'trezor-crypto',
+      destinations: ['iOS'],
+      xcframework_output_directory: 'build',
+      enable_bitcode: false,
+      product_name: 'libtrezor-crypto'
+    )
+  end
+
   desc "create wallet core xcframework"
   lane :core_xcframework do
     create_xcframework(

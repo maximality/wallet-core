@@ -1,5 +1,5 @@
 PODS:
-  - SwiftProtobuf (1.13.0)
+  - SwiftProtobuf (1.21.0)
 
 DEPENDENCIES:
   - SwiftProtobuf
@@ -9,7 +9,7 @@ SPEC REPOS:
     - SwiftProtobuf
 
 SPEC CHECKSUMS:
-  SwiftProtobuf: fd4693388a96c8c2df35d3b063272b0e7c499d00
+  SwiftProtobuf: afced68785854575756db965e9da52bbf3dc45e7
 
 PODFILE CHECKSUM: 14062089d1c0a95cea2c559f407bd4d606e2ae1e
 
