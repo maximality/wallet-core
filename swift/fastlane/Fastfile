@@ -53,6 +53,7 @@ platform :ios do
       scheme: 'WalletCore',
       destinations: ['iOS'],
       xcframework_output_directory: 'build',
+      include_debug_symbols: true,
       enable_bitcode: false
     )
   end
@@ -64,6 +65,7 @@ platform :ios do
       scheme: 'SwiftProtobuf',
       destinations: ['iOS'],
       xcframework_output_directory: 'build',
+      include_debug_symbols: true,
       enable_bitcode: false
     )
   end
