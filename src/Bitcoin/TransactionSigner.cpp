@@ -1,16 +1,19 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "TransactionSigner.h"
 
 #include "SignatureBuilder.h"
 
+#include "../BitcoinDiamond/Transaction.h"
+#include "../BitcoinDiamond/TransactionBuilder.h"
 #include "../Groestlcoin/Transaction.h"
+#include "../Verge/Transaction.h"
+#include "../Verge/TransactionBuilder.h"
 #include "../Zcash/Transaction.h"
 #include "../Zcash/TransactionBuilder.h"
+#include "../Zen/TransactionBuilder.h"
 
 namespace TW::Bitcoin {
 
@@ -27,7 +30,7 @@ Result<Transaction, Common::Proto::SigningError> TransactionSigner<Transaction, 
     } else {
         plan = TransactionBuilder::plan(input);
     }
-    auto tx_result = TransactionBuilder::template build<Transaction>(plan, input.toAddress, input.changeAddress, input.coinType, input.lockTime);
+    auto tx_result = TransactionBuilder::template build<Transaction>(plan, input);
     if (!tx_result) {
         return Result<Transaction, Common::Proto::SigningError>::failure(tx_result.error());
     }
@@ -47,7 +50,7 @@ Result<HashPubkeyList, Common::Proto::SigningError> TransactionSigner<Transactio
     } else {
         plan = TransactionBuilder::plan(input);
     }
-    auto tx_result = TransactionBuilder::template build<Transaction>(plan, input.toAddress, input.changeAddress, input.coinType, input.lockTime);
+    auto tx_result = TransactionBuilder::template build<Transaction>(plan, input);
     if (!tx_result) {
         return Result<HashPubkeyList, Common::Proto::SigningError>::failure(tx_result.error());
     }
@@ -63,6 +66,9 @@ Result<HashPubkeyList, Common::Proto::SigningError> TransactionSigner<Transactio
 // Explicitly instantiate a Signers for compatible transactions.
 template class Bitcoin::TransactionSigner<Bitcoin::Transaction, TransactionBuilder>;
 template class Bitcoin::TransactionSigner<Zcash::Transaction, Zcash::TransactionBuilder>;
+template class Bitcoin::TransactionSigner<Bitcoin::Transaction, Zen::TransactionBuilder>;
 template class Bitcoin::TransactionSigner<Groestlcoin::Transaction, TransactionBuilder>;
+template class Bitcoin::TransactionSigner<Verge::Transaction, Verge::TransactionBuilder>;
+template class Bitcoin::TransactionSigner<BitcoinDiamond::Transaction, BitcoinDiamond::TransactionBuilder>;
 
 } // namespace TW::Bitcoin

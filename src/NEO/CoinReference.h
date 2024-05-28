@@ -1,8 +1,6 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #pragma once
 
@@ -15,7 +13,7 @@
 
 namespace TW::NEO {
 
-class CoinReference : public Serializable {
+class CoinReference final: public Serializable {
   public:
     /// Number of bytes for prevIndex.
     static const size_t prevIndexSize = 2;
@@ -24,13 +22,16 @@ class CoinReference : public Serializable {
     uint256_t prevHash;
     uint16_t prevIndex = 0;
 
-    virtual ~CoinReference() {}
+    ~CoinReference() override = default;
 
-    int64_t size() const override {
+    size_t size() const override {
         return Hash::sha256Size + prevIndexSize;
     }
 
-    void deserialize(const Data& data, int initial_pos = 0) override {
+    void deserialize(const Data& data, size_t initial_pos = 0) override {
+        if (data.size() < initial_pos + size()) {
+            throw std::invalid_argument("Data::Cannot read enough bytes!");
+        }
         prevHash = load(readBytes(data, Hash::sha256Size, initial_pos));
         prevIndex = decode16LE(data.data() + initial_pos + Hash::sha256Size);
     }

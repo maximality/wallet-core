@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "OntTxBuilder.h"
 
@@ -41,6 +39,15 @@ Data OntTxBuilder::build(const Ontology::Proto::SigningInput& input) {
         return OntTxBuilder::decimals(input);
     }
     return Data();
+}
+
+Transaction OntTxBuilder::buildTransferTx(const Ontology::Proto::SigningInput &input) {
+    auto fromSigner = Address(input.owner_address());
+    auto toAddress = Address(input.to_address());
+    auto payerAddress = Address(input.payer_address());
+    auto transferTx = Ont().unsignedTransfer(fromSigner, toAddress, input.amount(), payerAddress,
+                                    input.gas_price(), input.gas_limit(), input.nonce());
+    return transferTx;
 }
 
 } // namespace TW::Ontology

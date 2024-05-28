@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 package com.trustwallet.core.app.blockchains.juno
 
@@ -21,6 +19,7 @@ class TestJunoAddress {
         val addr = "juno1gckvjxau7k56f8wg8c8xj80khyp83y8x8eqc94"
         val anyAddr = AnyAddress(addr, CoinType.COSMOS, "juno")
         assert(AnyAddress.isValidBech32(anyAddr.description(), CoinType.COSMOS, "juno"))
+        assert(AnyAddress.isValid(anyAddr.description(), CoinType.JUNO))
         assert(!AnyAddress.isValidBech32(anyAddr.description(), CoinType.BITCOIN, "juno"))
         assert(!AnyAddress.isValid(anyAddr.description(), CoinType.BITCOIN))
         assert(!AnyAddress.isValid(anyAddr.description(), CoinType.COSMOS))

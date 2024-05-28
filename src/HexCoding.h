@@ -1,13 +1,12 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #pragma once
 
 #include "Data.h"
 #include "rust/bindgen/WalletCoreRSBindgen.h"
+#include "rust/Wrapper.h"
 
 #include <algorithm>
 #include <array>
@@ -23,15 +22,11 @@ namespace TW::internal {
 /// valid hexadecimal.
 inline Data parse_hex(const std::string& input) {
     if (input.empty()) {
-        return Data();
+        return {};
     }
-    auto decoded = decode_hex(input.c_str());
-    if (decoded.data == nullptr || decoded.size == 0) {
-        return Data();
-    }
-    std::vector<uint8_t> decoded_vec(&decoded.data[0], &decoded.data[decoded.size]);
-    std::free(decoded.data);
-    return decoded_vec;
+
+    Rust::CByteArrayResultWrapper res = Rust::decode_hex(input.c_str());
+    return res.unwrap_or_default().data;
 }
 }
 
@@ -50,9 +45,9 @@ inline bool is_hex_encoded(const std::string& s)
 template <typename T>
 inline std::string hex(const T& collection, bool prefixed = false) {
     auto rust_functor = [prefixed](auto&& collection){
-        auto res = encode_hex(collection.data(), collection.size(), prefixed);
+        auto res = Rust::encode_hex(collection.data(), collection.size(), prefixed);
         std::string encoded_str(res);
-        free_string(res);
+        Rust::free_string(res);
         return encoded_str;
     };
     if constexpr (std::is_same_v<T, Data>) {

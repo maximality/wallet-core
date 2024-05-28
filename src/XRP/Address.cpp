@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "Address.h"
 #include "../Base58.h"
@@ -11,7 +9,7 @@
 namespace TW::Ripple {
 
 bool Address::isValid(const std::string& string) {
-    const auto decoded = Base58::decodeCheck(string, Base58Alphabet::Ripple);
+    const auto decoded = Base58::decodeCheck(string, Rust::Base58Alphabet::Ripple);
     if (decoded.size() != Address::size) {
         return false;
     }
@@ -19,7 +17,7 @@ bool Address::isValid(const std::string& string) {
 }
 
 Address::Address(const std::string& string) {
-    const auto decoded = Base58::decodeCheck(string, Base58Alphabet::Ripple);
+    const auto decoded = Base58::decodeCheck(string, Rust::Base58Alphabet::Ripple);
     if (decoded.size() != Address::size) {
         throw std::invalid_argument("Invalid address string");
     }
@@ -33,7 +31,7 @@ Address::Address(const PublicKey& publicKey) {
 }
 
 std::string Address::string() const {
-    return Base58::encodeCheck(bytes, Base58Alphabet::Ripple);
+    return Base58::encodeCheck(bytes, Rust::Base58Alphabet::Ripple);
 }
 
 } // namespace TW::Ripple

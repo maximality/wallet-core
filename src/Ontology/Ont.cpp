@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "Ont.h"
 #include "Data.h"
@@ -41,6 +39,18 @@ Transaction Ont::transfer(const Signer& from, const Address& to, uint64_t amount
                           payer.getAddress().string(), invokeCode);
     from.sign(tx);
     payer.addSign(tx);
+    return tx;
+}
+
+Transaction Ont::unsignedTransfer(const Address& from, const Address& to, uint64_t amount,
+                                  const Address& payer, uint64_t gasPrice, uint64_t gasLimit, 
+                                  uint32_t nonce) {
+    NeoVmParamValue::ParamList transferParam{from._data, to._data, amount};
+    NeoVmParamValue::ParamArray args{transferParam};
+    auto invokeCode =
+        ParamsBuilder::buildNativeInvokeCode(contractAddress(), 0x00, "transfer", {args});
+    auto tx = Transaction(version, txType, nonce, gasPrice, gasLimit,
+                          payer.string(), invokeCode);
     return tx;
 }
 

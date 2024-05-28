@@ -1,8 +1,6 @@
-// Copyright © 2017-2021 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "FeeCalculator.h"
 
@@ -29,18 +27,35 @@ int64_t LinearFeeCalculator::calculateSingleInput(int64_t byteFee) const noexcep
 }
 
 class DecredFeeCalculator : public LinearFeeCalculator {
+private:
+    bool disableDustFilter = false;
+
 public:
-    constexpr DecredFeeCalculator() noexcept
-        : LinearFeeCalculator(gDecredBytesPerInput, gDecredBytesPerOutput, gDecredBytesBase) {}
+    constexpr DecredFeeCalculator(bool disableFilter = false) noexcept
+        : LinearFeeCalculator(gDecredBytesPerInput, gDecredBytesPerOutput, gDecredBytesBase)
+        , disableDustFilter(disableFilter) {}
+
+    int64_t calculateSingleInput(int64_t byteFee) const noexcept override {
+        if (disableDustFilter) { 
+            return 0; 
+        }
+        return LinearFeeCalculator::calculateSingleInput(byteFee);
+    }
 };
 
 static constexpr DefaultFeeCalculator defaultFeeCalculator{};
+static constexpr DefaultFeeCalculator defaultFeeCalculatorNoDustFilter(true);
 static constexpr DecredFeeCalculator decredFeeCalculator{};
+static constexpr DecredFeeCalculator decredFeeCalculatorNoDustFilter(true);
 static constexpr SegwitFeeCalculator segwitFeeCalculator{};
+static constexpr SegwitFeeCalculator segwitFeeCalculatorNoDustFilter(true);
 
-const FeeCalculator& getFeeCalculator(TWCoinType coinType) noexcept {
+const FeeCalculator& getFeeCalculator(TWCoinType coinType, bool disableFilter) noexcept {
     switch (coinType) {
     case TWCoinTypeDecred:
+        if (disableFilter) {
+            return decredFeeCalculatorNoDustFilter;
+        }
         return decredFeeCalculator;
 
     case TWCoinTypeBitcoin:
@@ -49,9 +64,17 @@ const FeeCalculator& getFeeCalculator(TWCoinType coinType) noexcept {
     case TWCoinTypeLitecoin:
     case TWCoinTypeViacoin:
     case TWCoinTypeGroestlcoin:
+    case TWCoinTypeSyscoin:
+    case TWCoinTypeStratis:
+        if (disableFilter) {
+            return segwitFeeCalculatorNoDustFilter;
+        }
         return segwitFeeCalculator;
 
     default:
+        if (disableFilter) {
+            return defaultFeeCalculatorNoDustFilter;
+        }
         return defaultFeeCalculator;
     }
 }

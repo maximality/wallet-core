@@ -1,8 +1,6 @@
-// Copyright © 2017-2023 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include <jni.h>
 #include <stdio.h>
@@ -11,7 +9,7 @@
 #include "AnySigner.h"
 #include "TWJNI.h"
 
-jbyteArray JNICALL Java_com_trustwallet_core_AnySignerKt_signImpl(JNIEnv *env, jclass thisClass, jbyteArray input, jobject coin) {
+jbyteArray JNICALL Java_com_trustwallet_core_AnySigner_sign(JNIEnv *env, jclass thisClass, jbyteArray input, jobject coin) {
     jclass coinClass = (*env)->GetObjectClass(env, coin);
     jmethodID coinValueMethodID = (*env)->GetMethodID(env, coinClass, "value", "()I");
     uint32_t coinValue = (*env)->CallIntMethod(env, coin, coinValueMethodID);
@@ -23,14 +21,14 @@ jbyteArray JNICALL Java_com_trustwallet_core_AnySignerKt_signImpl(JNIEnv *env, j
     return resultData;
 }
 
-jboolean JNICALL Java_com_trustwallet_core_AnySignerKt_supportsJsonImpl(JNIEnv *env, jclass thisClass, jobject coin) {
+jboolean JNICALL Java_com_trustwallet_core_AnySigner_supportsJson(JNIEnv *env, jclass thisClass, jobject coin) {
     jclass coinClass = (*env)->GetObjectClass(env, coin);
     jmethodID coinValueMethodID = (*env)->GetMethodID(env, coinClass, "value", "()I");
     uint32_t coinValue = (*env)->CallIntMethod(env, coin, coinValueMethodID);
     return TWAnySignerSupportsJSON(coinValue);
 }
 
-jstring JNICALL Java_com_trustwallet_core_AnySignerKt_signJsonImpl(JNIEnv *env, jclass thisClass, jstring json, jbyteArray key, jobject coin) {
+jstring JNICALL Java_com_trustwallet_core_AnySigner_signJson(JNIEnv *env, jclass thisClass, jstring json, jbyteArray key, jobject coin) {
     jclass coinClass = (*env)->GetObjectClass(env, coin);
     jmethodID coinValueMethodID = (*env)->GetMethodID(env, coinClass, "value", "()I");
     uint32_t coinValue = (*env)->CallIntMethod(env, coin, coinValueMethodID);
@@ -43,7 +41,7 @@ jstring JNICALL Java_com_trustwallet_core_AnySignerKt_signJsonImpl(JNIEnv *env, 
     return TWStringJString(result, env);
 }
 
-jbyteArray JNICALL Java_com_trustwallet_core_AnySignerKt_planImpl(JNIEnv *env, jclass thisClass, jbyteArray input, jobject coin) {
+jbyteArray JNICALL Java_com_trustwallet_core_AnySigner_plan(JNIEnv *env, jclass thisClass, jbyteArray input, jobject coin) {
     jclass coinClass = (*env)->GetObjectClass(env, coin);
     jmethodID coinValueMethodID = (*env)->GetMethodID(env, coinClass, "value", "()I");
     uint32_t coinValue = (*env)->CallIntMethod(env, coin, coinValueMethodID);

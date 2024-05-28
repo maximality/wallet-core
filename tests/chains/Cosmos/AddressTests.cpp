@@ -1,8 +1,6 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "HexCoding.h"
 #include "PrivateKey.h"
@@ -13,6 +11,10 @@
 #include <TrustWalletCore/TWHDWallet.h>
 
 namespace TW::Cosmos {
+
+TEST(CosmosAddressAddressToData, Invalid) {
+    ASSERT_TRUE(addressToData(TWCoinTypeCosmos, "fake").empty());
+}
 
 TEST(CosmosAddress, Valid) {
     ASSERT_TRUE(Address::isValid(TWCoinTypeBinance, "bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2"));

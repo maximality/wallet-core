@@ -1,8 +1,6 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include <TrustWalletCore/TWAccount.h>
 
@@ -10,7 +8,8 @@
 
 using namespace TW;
 
-struct TWAccount* _Nonnull TWAccountCreate(TWString* _Nonnull address, enum TWCoinType coin,
+struct TWAccount* _Nonnull TWAccountCreate(TWString* _Nonnull address,
+                                           enum TWCoinType coin,
                                            enum TWDerivation derivation, 
                                            TWString* _Nonnull derivationPath,
                                            TWString* _Nonnull publicKey,
@@ -33,6 +32,10 @@ TWString* _Nonnull TWAccountAddress(struct TWAccount* _Nonnull account) {
     return TWStringCreateWithUTF8Bytes(account->impl.address.c_str());
 }
 
+enum TWCoinType TWAccountCoin(struct TWAccount* _Nonnull account) {
+    return account->impl.coin;
+}
+
 enum TWDerivation TWAccountDerivation(struct TWAccount* _Nonnull account) {
     return account->impl.derivation;
 }
@@ -47,8 +50,4 @@ TWString* _Nonnull TWAccountPublicKey(struct TWAccount* _Nonnull account) {
 
 TWString* _Nonnull TWAccountExtendedPublicKey(struct TWAccount* _Nonnull account) {
     return TWStringCreateWithUTF8Bytes(account->impl.extendedPublicKey.c_str());
-}
-
-enum TWCoinType TWAccountCoin(struct TWAccount* _Nonnull account) {
-    return account->impl.coin;
 }

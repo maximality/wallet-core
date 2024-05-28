@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #pragma once
 
@@ -10,6 +8,7 @@
 #include "PublicKey.h"
 
 #include "Everscale/CommonTON/RawAddress.h"
+#include <optional>
 
 #include <string>
 
@@ -44,7 +43,7 @@ public:
     [[nodiscard]] static bool isValid(const std::string& string) noexcept;
 
     /// Initializes an address with a string representation.
-    explicit Address(const std::string& string);
+    explicit Address(const std::string& string, std::optional<bool> bounceable = std::nullopt);
 
     /// Initializes an address with its parts
     explicit Address(

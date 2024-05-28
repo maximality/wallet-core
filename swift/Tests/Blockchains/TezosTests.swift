@@ -1,8 +1,6 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 import WalletCore
 import XCTest
@@ -112,6 +110,27 @@ class TezosTests: XCTestCase {
         let expected = "1b1f9345dc9f77bd24b09034d1d2f9a28f02ac837f49db54b8d68341f53dc4b76c00fe2ce0cccc0214af521ad60c140c5589b4039247a08d0695d8b601a08d0600000136767f88850bae28bfb9f46b73c5e87ede4de12700ffff087472616e7366657200000066020000006107070100000024747a31696f7a36326b447736476d35484170655174633150476d4e32775042744a4b5550020000003107070100000024747a31696f7a36326b447736476d35484170655174633150476d4e32775042744a4b555007070000000a552d24710d6c59383286700c6c2917b25a6c1fa8b587e593c289dd47704278796792f1e522c1623845ec991e292b0935445e6994850bd03f035a006c5ed93806"
 
         XCTAssertEqual(output.encoded.hexString, expected)
+    }
+    
+    public func testMessageSignerSignAndVerify() {
+        let privateKey = PrivateKey(data: Data(hexString: "91b4fb8d7348db2e7de2693f58ce1cceb966fa960739adac1d9dba2cbaa0940a")!)!
+        let msg = "05010000004254657a6f73205369676e6564204d6573736167653a207465737455726c20323032332d30322d30385431303a33363a31382e3435345a2048656c6c6f20576f726c64"
+        let signature = TezosMessageSigner.signMessage(privateKey: privateKey, message: msg)
+        XCTAssertEqual(signature, "edsigu3se2fcEJUCm1aqxjzbHdf7Wsugr4mLaA9YM2UVZ9Yy5meGv87VqHN3mmDeRwApTj1JKDaYjqmLZifSFdWCqBoghqaowwJ")
+        let pubKey = privateKey.getPublicKey(coinType: .tezos)
+        XCTAssertTrue(TezosMessageSigner.verifyMessage(pubKey: pubKey, message: msg, signature: signature))
+    }
+    
+    public func testMessageSignerInputToPayload() {
+        let payload = TezosMessageSigner.inputToPayload(message: "Tezos Signed Message: testUrl 2023-02-08T10:36:18.454Z Hello World");
+        let expected = "05010000004254657a6f73205369676e6564204d6573736167653a207465737455726c20323032332d30322d30385431303a33363a31382e3435345a2048656c6c6f20576f726c64";
+        XCTAssertEqual(payload, expected);
+    }
+    
+    public func testMessageSignerFormatMessage() {
+        let formatedMsg = TezosMessageSigner.formatMessage(message: "Hello World", url: "testUrl")
+        let regex = try! NSRegularExpression(pattern: "Tezos Signed Message: \\S+ \\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z .+")
+        XCTAssertTrue(regex.firstMatch(in: formatedMsg, range: NSRange(location: 0, length: formatedMsg.utf16.count)) != nil)
     }
 
     public func testSigning() {

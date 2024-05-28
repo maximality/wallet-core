@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #pragma once
 
@@ -28,7 +26,8 @@ struct TWAccount;
 /// \param extendedPublicKey Base58 encoded extended public key.
 /// \return A new Account.
 TW_EXPORT_STATIC_METHOD
-struct TWAccount* _Nonnull TWAccountCreate(TWString* _Nonnull address, enum TWCoinType coin,
+struct TWAccount* _Nonnull TWAccountCreate(TWString* _Nonnull address,
+                                           enum TWCoinType coin,
                                            enum TWDerivation derivation,
                                            TWString* _Nonnull derivationPath,
                                            TWString* _Nonnull publicKey,
@@ -44,6 +43,12 @@ void TWAccountDelete(struct TWAccount *_Nonnull account);
 /// \param account Account to get the address of.
 TW_EXPORT_PROPERTY
 TWString *_Nonnull TWAccountAddress(struct TWAccount *_Nonnull account);
+
+/// Return CoinType enum of an account.
+///
+/// \param account Account to get the coin type of.
+TW_EXPORT_PROPERTY
+enum TWCoinType TWAccountCoin(struct TWAccount* _Nonnull account);
 
 /// Returns the derivation enum of an account.
 ///
@@ -68,11 +73,5 @@ TWString* _Nonnull TWAccountPublicKey(struct TWAccount* _Nonnull account);
 /// \param account Account to get the extended public key of.
 TW_EXPORT_PROPERTY
 TWString* _Nonnull TWAccountExtendedPublicKey(struct TWAccount* _Nonnull account);
-
-/// Return CoinType enum of an account.
-///
-/// \param account Account to get the coin type of.
-TW_EXPORT_PROPERTY
-enum TWCoinType TWAccountCoin(struct TWAccount* _Nonnull account);
 
 TW_EXTERN_C_END

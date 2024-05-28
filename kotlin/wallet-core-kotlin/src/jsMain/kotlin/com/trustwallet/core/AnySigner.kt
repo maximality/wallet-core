@@ -1,25 +1,22 @@
-// Copyright © 2017-2023 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 package com.trustwallet.core
 
 import WalletCore
 
-internal actual fun signImpl(input: ByteArray, coin: CoinType): ByteArray =
-    WalletCore.Instance.AnySigner.sign(input.toUInt8Array(), coin._value)
-        .unsafeCast<UInt8Array>()
-        .toByteArray()
+actual object AnySigner {
 
-internal actual fun supportsJsonImpl(coin: CoinType): Boolean =
-    WalletCore.Instance.AnySigner.supportsJSON(coin._value) as Boolean
+    actual fun sign(input: ByteArray, coin: CoinType): ByteArray =
+        WalletCore.Instance.AnySigner.sign(input.asUInt8Array(), coin.jsValue).asByteArray()
 
-internal actual fun signJsonImpl(json: String, key: ByteArray, coin: CoinType): String =
-    TODO()
+    actual fun supportsJson(coin: CoinType): Boolean =
+        WalletCore.Instance.AnySigner.supportsJSON(coin.jsValue)
 
-internal actual fun planImpl(input: ByteArray, coin: CoinType): ByteArray =
-    WalletCore.Instance.AnySigner.plan(input.toUInt8Array(), coin._value)
-        .unsafeCast<UInt8Array>()
-        .toByteArray()
+    actual fun signJson(json: String, key: ByteArray, coin: CoinType): String =
+        TODO()
+
+    actual fun plan(input: ByteArray, coin: CoinType): ByteArray =
+        WalletCore.Instance.AnySigner.plan(input.asUInt8Array(), coin.jsValue).asByteArray()
+}

@@ -1,8 +1,6 @@
-// Copyright © 2017-2021 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #pragma once
 
@@ -56,19 +54,41 @@ public:
 
 /// Default Bitcoin transaction fee calculator, non-segwit.
 class DefaultFeeCalculator : public LinearFeeCalculator {
+private:
+    bool disableDustFilter = false;
+
 public:
-    constexpr DefaultFeeCalculator() noexcept
-        : LinearFeeCalculator(gDefaultBytesPerInput, gDefaultBytesPerOutput, gDefaultBytesBase) {}
+    constexpr DefaultFeeCalculator(bool disableFilter = false) noexcept
+        : LinearFeeCalculator(gDefaultBytesPerInput, gDefaultBytesPerOutput, gDefaultBytesBase)
+        , disableDustFilter(disableFilter) {}
+    
+    [[nodiscard]] int64_t calculateSingleInput(int64_t byteFee) const noexcept override {
+        if (disableDustFilter) { 
+            return 0; 
+        }
+        return LinearFeeCalculator::calculateSingleInput(byteFee);
+    }
 };
 
 /// Bitcoin Segwit transaction fee calculator
 class SegwitFeeCalculator : public LinearFeeCalculator {
+private:
+    bool disableDustFilter = false;
+
 public:
-    constexpr SegwitFeeCalculator() noexcept
-        : LinearFeeCalculator(gSegwitBytesPerInput, gSegwitBytesPerOutput, gSegwitBytesBase) {}
+    constexpr SegwitFeeCalculator(bool disableFilter = false) noexcept
+        : LinearFeeCalculator(gSegwitBytesPerInput, gSegwitBytesPerOutput, gSegwitBytesBase)
+        , disableDustFilter(disableFilter) {}
+
+    [[nodiscard]] int64_t calculateSingleInput(int64_t byteFee) const noexcept override {
+        if (disableDustFilter) {
+            return 0;
+        }
+        return LinearFeeCalculator::calculateSingleInput(byteFee);
+    }
 };
 
 /// Return the fee calculator for the given coin.
-const FeeCalculator& getFeeCalculator(TWCoinType coinType) noexcept;
+const FeeCalculator& getFeeCalculator(TWCoinType coinType, bool disableFilter = false) noexcept;
 
 } // namespace TW::Bitcoin

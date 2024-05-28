@@ -1,16 +1,14 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #pragma once
 
 #include "Address.h"
 #include "Asset.h"
+#include "Data.h"
 #include "ParamsBuilder.h"
 #include "Transaction.h"
-#include "Data.h"
 
 namespace TW::Ontology {
 
@@ -36,6 +34,7 @@ public:
     Transaction transfer(const Signer& from, const Address& to, uint64_t amount,
                          const Signer& payer, uint64_t gasPrice, uint64_t gasLimit,
                          uint32_t nonce);
+    Transaction unsignedTransfer(const Address& from, const Address& to, uint64_t amount,
+                                 const Address& payer, uint64_t gasPrice, uint64_t gasLimit, uint32_t nonce);
 };
-
 } // namespace TW::Ontology

@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "Transaction.h"
 
@@ -96,7 +94,7 @@ Data Transaction::getPreImage(const Bitcoin::Script& scriptCode, size_t index, e
     // The input being signed (replacing the scriptSig with scriptCode + amount)
     // The prevout may already be contained in hashPrevout, and the nSequence
     // may already be contain in hashSequence.
-    reinterpret_cast<const Bitcoin::OutPoint&>(inputs[index].previousOutput).encode(data);
+    inputs[index].previousOutput.encode(data);
     scriptCode.encode(data);
 
     encode64LE(amount, data);

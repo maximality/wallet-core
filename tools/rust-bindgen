@@ -2,6 +2,8 @@
 
 set -e
 
+source "$(dirname $0)/android-sdk"
+
 TARGET_NAME="libwallet_core_rs.a"
 TARGET_XCFRAMEWORK_NAME=../swift/WalletCoreRs.xcframework
 BUILD_FOLDER=../rust/target
@@ -17,33 +19,77 @@ create_xc_framework() {
 
 cd rust
 
-if [[ "$1" != "android" ]]; then
-  echo "Generating Native targets"
-  cargo build --release
-  cargo build --target wasm32-unknown-emscripten --release
-fi
-if [[ `uname` == "Darwin" ]]; then
-  echo "Generating Android targets"
-  cargo build --target aarch64-linux-android --target armv7-linux-androideabi --target x86_64-linux-android --target i686-linux-android --release
-  if [[ "$1" != "android" ]]; then
-    echo "Generating iOS targets"
-    cargo build --target aarch64-apple-ios --target aarch64-apple-ios-sim --target x86_64-apple-ios --target aarch64-apple-darwin --target x86_64-apple-darwin --release &
-    cargo +nightly build -Z build-std --target aarch64-apple-ios-macabi --target x86_64-apple-ios-macabi --release &
-    wait
-    lipo $BUILD_FOLDER/x86_64-apple-ios/release/$TARGET_NAME $BUILD_FOLDER/aarch64-apple-ios-sim/release/$TARGET_NAME -create -output $BUILD_FOLDER/$TARGET_NAME
-    mkdir -p $BUILD_FOLDER/darwin_universal
-    lipo $BUILD_FOLDER/x86_64-apple-darwin/release/$TARGET_NAME $BUILD_FOLDER/aarch64-apple-darwin/release/$TARGET_NAME -create -output $BUILD_FOLDER/darwin_universal/$TARGET_NAME
-    mkdir -p $BUILD_FOLDER/catalyst
-    lipo $BUILD_FOLDER/aarch64-apple-ios-macabi/release/$TARGET_NAME $BUILD_FOLDER/x86_64-apple-ios-macabi/release/$TARGET_NAME -create -output $BUILD_FOLDER/catalyst/$TARGET_NAME
+NATIVE="false"
+ANDROID="false"
+IOS="false"
+WASM="false"
 
-    create_xc_framework
+# Whether to generate bindings for native platform.
+if [[ "$1" == "native" ]] || [[ "$1" == "" ]]; then
+  NATIVE="true"
+fi
+
+# Whether to generate bindings for Android.
+  if [[ "$1" == "android" ]] || [[ "$1" == "" ]]; then
+    ANDROID="true"
+  fi
+
+# Generate bindings for ios platforms on MacOS only.
+if [[ `uname` == "Darwin" ]]; then
+# Whether to generate bindings for iOS.
+  if [[ "$1" == "ios" ]] || [[ "$1" == "" ]]; then
+    IOS="true"
   fi
 fi
+
+# Whether to generate bindings for WASM.
+if [[ "$1" == "wasm" ]] || [[ "$1" == "" ]]; then
+  WASM="true"
+fi
+
+if [[ "$NATIVE" == "true" ]]; then
+  echo "Generating Native target"
+  cargo build --release
+fi
+
+export RUSTFLAGS="-Zlocation-detail=none"
+
+if [[ "$WASM" == "true" ]]; then
+  echo "Generating WASM target"
+  cargo build -Z build-std=std,panic_abort --target wasm32-unknown-emscripten --release
+fi
+
+if [[ "$ANDROID" == "true" ]]; then
+  NDK_BIN_PATH=$(find_android_ndk)
+
+  export AR="$NDK_BIN_PATH/llvm-ar"
+  export CC_aarch64_linux_android="$NDK_BIN_PATH/aarch64-linux-android$NDK_API_LEVEL-clang"
+  export CC_x86_64_linux_android="$NDK_BIN_PATH/x86_64-linux-android$NDK_API_LEVEL-clang"
+  export CC_i686_linux_android="$NDK_BIN_PATH/i686-linux-android$NDK_API_LEVEL-clang"
+  export CC_armv7_linux_androideabi="$NDK_BIN_PATH/armv7a-linux-androideabi$NDK_API_LEVEL-clang"
+
+  echo "Generating Android targets"
+  cargo build -Z build-std=std,panic_abort --target aarch64-linux-android --target armv7-linux-androideabi --target x86_64-linux-android --target i686-linux-android --release
+fi
+
+if [[ "$IOS" == "true" ]]; then
+  echo "Generating iOS targets"
+  cargo build -Z build-std=std,panic_abort --target aarch64-apple-ios --target aarch64-apple-ios-sim --target x86_64-apple-ios --target aarch64-apple-darwin --target x86_64-apple-darwin --target aarch64-apple-ios-macabi --target x86_64-apple-ios-macabi --release &
+  wait
+  lipo $BUILD_FOLDER/x86_64-apple-ios/release/$TARGET_NAME $BUILD_FOLDER/aarch64-apple-ios-sim/release/$TARGET_NAME -create -output $BUILD_FOLDER/$TARGET_NAME
+  mkdir -p $BUILD_FOLDER/darwin_universal
+  lipo $BUILD_FOLDER/x86_64-apple-darwin/release/$TARGET_NAME $BUILD_FOLDER/aarch64-apple-darwin/release/$TARGET_NAME -create -output $BUILD_FOLDER/darwin_universal/$TARGET_NAME
+  mkdir -p $BUILD_FOLDER/catalyst
+  lipo $BUILD_FOLDER/aarch64-apple-ios-macabi/release/$TARGET_NAME $BUILD_FOLDER/x86_64-apple-ios-macabi/release/$TARGET_NAME -create -output $BUILD_FOLDER/catalyst/$TARGET_NAME
+
+  create_xc_framework
+fi
+
 cbindgen --crate $CRATE --output ../src/rust/bindgen/$HEADER_NAME
 cd -
 [[ -e rust/target/release/${TARGET_NAME} ]] && cp rust/target/release/${TARGET_NAME} build/local/lib/
 
-if [[ `uname` == "Darwin" ]] && [[ "$1" != "android" ]]; then
+if [[ "$IOS" == "true" ]]; then
 cd rust
 cat > $TARGET_XCFRAMEWORK_NAME/Info.plist << EOF
 <?xml version="1.0" encoding="UTF-8"?>

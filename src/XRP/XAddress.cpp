@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "XAddress.h"
 
@@ -15,7 +13,7 @@ namespace TW::Ripple {
 const Data prefixMainnet = {0x05, 0x44};
 
 bool XAddress::isValid(const std::string& string) {
-    const auto decoded = Base58::decodeCheck(string, Base58Alphabet::Ripple);
+    const auto decoded = Base58::decodeCheck(string, Rust::Base58Alphabet::Ripple);
     if (decoded.size() != XAddress::size) {
         return false;
     }
@@ -32,7 +30,7 @@ XAddress::XAddress(const std::string& string) {
     if (!XAddress::isValid(string)) {
         throw std::invalid_argument("Invalid address string");
     }
-    const auto decoded = Base58::decodeCheck(string, Base58Alphabet::Ripple);
+    const auto decoded = Base58::decodeCheck(string, Rust::Base58Alphabet::Ripple);
     std::copy(decoded.begin() + prefixMainnet.size(), decoded.begin() + prefixMainnet.size() + XAddress::keyHashSize, bytes.begin());
     if (decoded[22] == byte(TagFlag::classic)) {
         tag = decode32LE(Data(decoded.end() - 8, decoded.end() - 4).data());
@@ -57,7 +55,7 @@ std::string XAddress::string() const {
     append(result, byte(flag));
     encode32LE(tag, result);
     append(result, Data{0x00, 0x00, 0x00, 0x00});
-    return Base58::encodeCheck(result, Base58Alphabet::Ripple);
+    return Base58::encodeCheck(result, Rust::Base58Alphabet::Ripple);
 }
 
 } // namespace TW::Ripple

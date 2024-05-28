@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #pragma once
 
@@ -12,6 +10,8 @@
 
 #include "Cell.h"
 #include "CellSlice.h"
+#include "RawAddress.h"
+#include "uint256.h"
 
 namespace TW::CommonTON {
 
@@ -21,8 +21,6 @@ class CellBuilder {
     std::vector<Cell::Ref> references{};
 
 public:
-    using uint128_t = boost::multiprecision::uint128_t;
-
     CellBuilder() = default;
     CellBuilder(Data& appendedData, uint16_t bits);
 
@@ -40,6 +38,7 @@ public:
     void appendReferenceCell(Cell::Ref child);
     void appendBuilder(const CellBuilder& builder);
     void appendCellSlice(const CellSlice& other);
+    void appendAddress(const AddressData& addressData);
 
     Cell::Ref intoCell();
 

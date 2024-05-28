@@ -1,9 +1,8 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
+#include <TrustWalletCore/TWAnyAddress.h>
 #include <Aeternity/Address.h>
 #include <HexCoding.h>
 #include <gtest/gtest.h>
@@ -21,6 +20,7 @@ TEST(AeternityAddress, FromString) {
     auto address = Address("ak_2p5878zbFhxnrm7meL7TmqwtvBaqcBddyp5eGzZbovZ5FeVfcw");
     ASSERT_EQ(address.string(), "ak_2p5878zbFhxnrm7meL7TmqwtvBaqcBddyp5eGzZbovZ5FeVfcw");
     ASSERT_ANY_THROW(Address("invalid"));
+    ASSERT_ANY_THROW(Address("behave@wallet"));
 }
 
 } // namespace TW::Aeternity::tests

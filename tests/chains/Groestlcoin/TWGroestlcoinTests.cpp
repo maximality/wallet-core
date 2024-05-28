@@ -1,8 +1,6 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "TestUtilities.h"
 
@@ -23,11 +21,17 @@ TEST(Groestlcoin, Address) {
     auto addressString = WRAPS(TWGroestlcoinAddressDescription(address.get()));
     assertStringsEqual(addressString, "Fj62rBJi8LvbmWu2jzkaUX1NFXLEqDLoZM");
 
+    ASSERT_TRUE(TWGroestlcoinAddressIsValidString(addressString.get()));
+
     auto address2 = WRAP(TWGroestlcoinAddress, TWGroestlcoinAddressCreateWithString(STRING("Fj62rBJi8LvbmWu2jzkaUX1NFXLEqDLoZM").get()));
     auto address2String = WRAPS(TWGroestlcoinAddressDescription(address2.get()));
     assertStringsEqual(address2String, "Fj62rBJi8LvbmWu2jzkaUX1NFXLEqDLoZM");
 
     ASSERT_TRUE(TWGroestlcoinAddressEqual(address.get(), address2.get()));
+
+    // invalid address
+    auto address3 = WRAP(TWGroestlcoinAddress, TWGroestlcoinAddressCreateWithString(STRING("Fj62rBJi8LvbmWu2jzkaUX1NFXLEqDLo").get()));
+    ASSERT_EQ(address3, nullptr);
 }
 
 TEST(Groestlcoin, BuildForLegacyAddress) {

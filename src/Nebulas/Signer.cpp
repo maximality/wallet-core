@@ -1,8 +1,6 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "Signer.h"
 #include "Base64.h"
@@ -15,14 +13,7 @@ namespace TW::Nebulas {
 Proto::SigningOutput Signer::sign(const Proto::SigningInput& input) noexcept {
     auto signer = Signer(load(input.chain_id()));
 
-    auto tx = Transaction(Address(input.from_address()),
-                          load(input.nonce()),
-                          load(input.gas_price()),
-                          load(input.gas_limit()),
-                          Address(input.to_address()),
-                          load(input.amount()),
-                          load(input.timestamp()),
-                          input.payload());
+    auto tx = signer.buildTransaction(input);
 
     auto privateKey = PrivateKey(Data(input.private_key().begin(), input.private_key().end()));
     signer.sign(privateKey, tx);
@@ -43,6 +34,20 @@ void Signer::sign(const PrivateKey& privateKey, Transaction& transaction) const 
 }
 
 Data Signer::hash(const Transaction& transaction) const noexcept {
+    return Hash::sha3_256(getPreImage(transaction));
+}
+
+Data Signer::hash(const Data& data) const noexcept {
+    return Hash::sha3_256(data);
+}
+
+Transaction Signer::buildTransaction(const Proto::SigningInput& input) const noexcept {
+    return {Transaction(Address(input.from_address()), load(input.nonce()), load(input.gas_price()),
+                        load(input.gas_limit()), Address(input.to_address()), load(input.amount()),
+                        load(input.timestamp()), input.payload())};
+}
+
+Data Signer::getPreImage(const Transaction& transaction) const noexcept {
     auto encoded = Data();
     auto payload = Data();
     auto* data = Transaction::newPayloadData(transaction.payload);
@@ -59,7 +64,7 @@ Data Signer::hash(const Transaction& transaction) const noexcept {
     encode256BE(encoded, chainID, 32);
     encode256BE(encoded, transaction.gasPrice, 128);
     encode256BE(encoded, transaction.gasLimit, 128);
-    return Hash::sha3_256(encoded);
+    return encoded;
 }
 
 } // namespace TW::Nebulas

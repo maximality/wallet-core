@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "AddressV3.h"
 #include "AddressV2.h"
@@ -163,7 +161,7 @@ AddressV3::AddressV3(const Data& data) {
 AddressV3::AddressV3(const AddressV3& other) = default;
 
 uint8_t AddressV3::firstByte(NetworkId networkId, Kind kind) {
-    byte first = (byte)(((byte)kind << 4) + networkId);
+    auto first = (byte)(((byte)kind << 4) + networkId);
     return first;
 }
 

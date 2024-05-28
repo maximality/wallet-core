@@ -1,12 +1,9 @@
-// Copyright © 2017-2023 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "Data.h"
 #include "Ethereum/EIP1014.h"
-#include "Ethereum/EIP4337.h"
 #include "Ethereum/EIP2645.h"
 #include <TrustWalletCore/TWEthereum.h>
 
@@ -18,11 +15,4 @@ TWString* TWEthereumEip2645GetPath(TWString* ethAddress, TWString* layer, TWStri
     const auto& applicationStr = *reinterpret_cast<const std::string*>(application);
     const auto& indexStr = *reinterpret_cast<const std::string*>(index);
     return new std::string(TW::Ethereum::accountPathFromAddress(ethAddressStr, layerStr, applicationStr, indexStr));
-}
-
-TWString* TWEthereumEip4337GetDeploymentAddress(TWString* _Nonnull factoryAddress, TWString* _Nonnull logicAddress, TWString* _Nonnull ownerAddress) {
-    const auto& factoryAddressStr = *reinterpret_cast<const std::string*>(factoryAddress);
-    const auto& logicAddressStr = *reinterpret_cast<const std::string*>(logicAddress);
-    const auto& ownerAddressStr = *reinterpret_cast<const std::string*>(ownerAddress);
-    return new std::string(TW::Ethereum::getEIP4337DeploymentAddress(factoryAddressStr, logicAddressStr, ownerAddressStr));
 }

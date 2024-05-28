@@ -1,8 +1,6 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "Serialization.h"
 
@@ -23,8 +21,9 @@ std::map<std::string, int> fields_order{
     {"data", 9},
     {"chainID", 10},
     {"version", 11},
-    {"options", 12},
-    {"signature", 13}};
+    {"signature", 12},
+    {"options", 13},
+    {"guardian", 14}};
 
 struct FieldsSorter {
     bool operator()(const std::string& lhs, const std::string& rhs) const {
@@ -64,6 +63,10 @@ sorted_json preparePayload(const MultiversX::Transaction& transaction) {
 
     if (transaction.options != 0) {
         payload["options"] = json(transaction.options);
+    }
+
+    if (!transaction.guardian.empty()) {
+        payload["guardian"] = json(transaction.guardian);
     }
 
     return payload;

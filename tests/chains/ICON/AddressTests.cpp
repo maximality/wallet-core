@@ -1,8 +1,6 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "HexCoding.h"
 #include "Icon/Address.h"
@@ -29,6 +27,8 @@ TEST(IconAddress, String) {
 
     const auto address2 = Address("cx116f042497e5f34268b1b91e742680f84cf4e9f3");
     ASSERT_EQ(address2.string(), "cx116f042497e5f34268b1b91e742680f84cf4e9f3");
+
+    EXPECT_ANY_THROW(new Address(""));
 }
 
 TEST(IconAddress, FromPrivateKey) {

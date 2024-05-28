@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "Signer.h"
 #include "OperationList.h"
@@ -60,6 +58,22 @@ Data Signer::signData(const PrivateKey& privateKey, const Data& data) {
     Data signedData = Data();
     append(signedData, data);
     append(signedData, signature);
+    return signedData;
+}
+
+Data Signer::buildUnsignedTx(const OperationList& operationList) {
+    Data txData = operationList.forge();
+    return txData;
+}
+
+Data Signer::buildSignedTx(const OperationList& operationList, Data signature) {
+    Data signedData = Data();
+
+    Data txData = operationList.forge();
+
+    append(signedData, txData);
+    append(signedData, signature);
+
     return signedData;
 }
 

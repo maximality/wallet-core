@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -5,10 +6,14 @@ plugins {
 }
 
 allprojects {
+    tasks.withType<JavaCompile> {
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
+    }
     tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            allWarningsAsErrors = true
-            jvmTarget = JavaVersion.VERSION_11.toString()
+        compilerOptions {
+            allWarningsAsErrors.set(true)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 }

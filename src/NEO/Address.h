@@ -1,8 +1,6 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #pragma once
 
@@ -30,9 +28,6 @@ class Address : public TW::Base58Address<AddressSize> {
 
     /// Initializes a NEO address with a collection of bytes.
     explicit Address(const Data& data) : TW::Base58Address<AddressSize>(data) {}
-
-    /// Initializes an address with a collection of public key.
-    explicit Address(uint8_t m, const std::vector<Data>& publicKeys);
 
     /// Initializes a NEO address with a public key.
     explicit Address(const PublicKey &publicKey);

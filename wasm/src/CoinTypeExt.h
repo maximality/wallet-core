@@ -1,8 +1,6 @@
-// Copyright © 2017-2023 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #pragma once
 
@@ -44,5 +42,6 @@ namespace TW::Wasm {
         static auto derivationPathWithDerivation(TWCoinType coin, TWDerivation derivation);
         static auto deriveAddress(TWCoinType coin, WasmPrivateKey* privateKey);
         static auto deriveAddressFromPublicKey(TWCoinType coin, WasmPublicKey* publicKey);
+        static auto deriveAddressFromPublicKeyAndDerivation(TWCoinType coin, WasmPublicKey* publicKey, TWDerivation derivation);
     };
 }

@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #pragma once
 
@@ -23,6 +21,7 @@ enum Hasher {
     HasherSha3_256, // version 3 SHA256
     HasherSha3_512, // version 3 SHA512
     HasherRipemd, // RIPEMD160
+    HasherBlake2b, // Blake2b
     HasherBlake256, // Blake256
     HasherGroestl512, // Groestl 512
     HasherSha256d, // SHA256 hash of the SHA256 hash
@@ -81,6 +80,9 @@ Data ripemd(const byte* data, size_t size);
 
 /// Computes the Blake256 hash.
 Data blake256(const byte* data, size_t size);
+
+/// Computes the Blake2b hash with default size (32).
+Data blake2b(const byte* data, size_t dataSize);
 
 /// Computes the Blake2b hash.
 Data blake2b(const byte* data, size_t dataSize, size_t hashSize);

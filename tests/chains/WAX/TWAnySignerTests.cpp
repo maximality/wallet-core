@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "TestUtilities.h"
 #include <TrustWalletCore/TWAnySigner.h>
@@ -41,6 +39,7 @@ TEST(TWAnySignerWAX, Sign) {
     input.set_memo("sent from wallet-core");
     input.set_private_key(key.data(), key.size());
     input.set_private_key_type(Proto::KeyType::MODERNK1);
+    input.set_expiration(1670507804 + 30);
 
     // https://wax.bloks.io/transaction/4548f7b28ee608663caea61234049ac0018415e02dd0abcea1c215c8da00d10a
     {

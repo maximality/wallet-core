@@ -1,11 +1,7 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
-#include <Ethereum/EIP2645.h>
-#include <Ethereum/Signer.h>
 #include <HDWallet.h>
 #include <Hash.h>
 #include <HexCoding.h>
@@ -47,37 +43,9 @@ PrivateKey getPrivateKeyFromEthPrivKey(const PrivateKey& ethPrivKey) {
 
 PrivateKey getPrivateKeyFromRawSignature(const Data& signature, const DerivationPath& derivationPath) {
     using namespace internal;
-    //auto data = parse_hex(signature);
-    auto ethSignature = Ethereum::Signer::signatureDataToStructSimple(signature);
-    auto seed = store(ethSignature.s);
+    // The signature is `rsv`, where `s` starts at 32 and is 32 long.
+    auto seed = subData(signature, 32, 32);
     return getPrivateKeyFromSeed(seed, derivationPath);
-}
-
-Data getPublicKeyFromPrivateKey(const Data& privateKey) {
-    auto pubKey = starknet_pubkey_from_private(hex(privateKey).c_str());
-    std::string pubKeyStr = pubKey;
-    free_string(pubKey);
-    return parse_hex(pubKeyStr, true);
-}
-
-Data sign(const Data& privateKey, const Data& digest) {
-    auto privKeyStr = hex(privateKey);
-    auto hexDigest = hex(digest);
-    auto resultSignature = starknet_sign(privKeyStr.c_str(), hexDigest.c_str());
-    auto toReturn = parse_hex(resultSignature);
-    free_string(resultSignature);
-    return toReturn;
-}
-
-bool verify(const Data& pubKey, const Data& signature, const Data& digest) {
-    if (signature.size() != 64) {
-        return false;
-    }
-    auto r = hex(subData(signature, 0, 32));
-    auto s = hex(subData(signature, 32));
-    auto pubKeyStr = hex(pubKey);
-    auto digestStr = hex(digest);
-    return starknet_verify(pubKeyStr.c_str(), digestStr.c_str(), r.c_str(), s.c_str());
 }
 
 } // namespace TW::ImmutableX

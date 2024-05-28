@@ -1,12 +1,11 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "TestUtilities.h"
 
 #include <TrustWalletCore/TWCoinType.h>
+#include <TrustWalletCore/TWPublicKey.h>
 
 #include <gtest/gtest.h>
 
@@ -56,7 +55,7 @@ TEST(TWCoinType, TWPurpose) {
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeTezos));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeTheta));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeThunderCore));
-    ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeTomoChain));
+    ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeViction));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeTron));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeVeChain));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeWanchain));
@@ -66,6 +65,7 @@ TEST(TWCoinType, TWPurpose) {
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeRavencoin));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeWaves));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeNEO));
+    ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeNebl));
 }
 
 TEST(TWCoinType, TWHDVersion) {
@@ -128,7 +128,7 @@ TEST(TWCoinType, TWPublicKeyType) {
     ASSERT_EQ(TWPublicKeyTypeED25519, TWCoinTypePublicKeyType(TWCoinTypeTezos));
     ASSERT_EQ(TWPublicKeyTypeSECP256k1Extended, TWCoinTypePublicKeyType(TWCoinTypeTheta));
     ASSERT_EQ(TWPublicKeyTypeSECP256k1Extended, TWCoinTypePublicKeyType(TWCoinTypeThunderCore));
-    ASSERT_EQ(TWPublicKeyTypeSECP256k1Extended, TWCoinTypePublicKeyType(TWCoinTypeTomoChain));
+    ASSERT_EQ(TWPublicKeyTypeSECP256k1Extended, TWCoinTypePublicKeyType(TWCoinTypeViction));
     ASSERT_EQ(TWPublicKeyTypeSECP256k1Extended, TWCoinTypePublicKeyType(TWCoinTypeTron));
     ASSERT_EQ(TWPublicKeyTypeSECP256k1Extended, TWCoinTypePublicKeyType(TWCoinTypeVeChain));
     ASSERT_EQ(TWPublicKeyTypeSECP256k1Extended, TWCoinTypePublicKeyType(TWCoinTypeWanchain));
@@ -138,6 +138,20 @@ TEST(TWCoinType, TWPublicKeyType) {
     ASSERT_EQ(TWPublicKeyTypeSECP256k1, TWCoinTypePublicKeyType(TWCoinTypeRavencoin));
     ASSERT_EQ(TWPublicKeyTypeCURVE25519, TWCoinTypePublicKeyType(TWCoinTypeWaves));
     ASSERT_EQ(TWPublicKeyTypeNIST256p1, TWCoinTypePublicKeyType(TWCoinTypeNEO));
+    ASSERT_EQ(TWPublicKeyTypeSECP256k1, TWCoinTypePublicKeyType(TWCoinTypeNebl));
+}
+
+TEST(TWCoinType, ValidateAddress) {
+    ASSERT_TRUE(TWCoinTypeValidate(TWCoinTypeBitcoin, STRING("12dNaXQtN5Asn2YFwT1cvciCrJa525fAe4").get()));
+    ASSERT_TRUE(TWCoinTypeValidate(TWCoinTypeBitcoin, STRING("bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4").get()));
+}
+
+TEST(TWCoinType, DeriveAddress) {
+    auto pkData = DATA("0279BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798");
+    auto publicKey = WRAP(TWPublicKey, TWPublicKeyCreateWithData(pkData.get(), TWPublicKeyTypeSECP256k1));
+
+    auto address = WRAPS(TWCoinTypeDeriveAddressFromPublicKeyAndDerivation(TWCoinTypeBitcoin, publicKey.get(), TWDerivationBitcoinSegwit));
+    assertStringsEqual(address, "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4");
 }
 
 TEST(TWCoinType, TWCoinTypeDerivationPath) {

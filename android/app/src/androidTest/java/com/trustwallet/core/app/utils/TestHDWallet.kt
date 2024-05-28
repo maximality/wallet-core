@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 package com.trustwallet.core.app.utils
 
@@ -144,6 +142,9 @@ class TestHDWallet {
 
         val address2 = wallet.getAddressDerivation(coin, Derivation.BITCOINLEGACY)
         assertEquals(address2, "1PeUvjuxyf31aJKX6kCXuaqxhmG78ZUdL1")
+
+        val address3 = wallet.getAddressDerivation(coin, Derivation.BITCOINTESTNET)
+        assertEquals(address3, "tb1qwgpxgwn33z3ke9s7q65l976pseh4edrzfmyvl0")
     }
 
     @Test

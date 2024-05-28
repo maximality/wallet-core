@@ -1,8 +1,6 @@
-// Copyright © 2017-2021 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "HDWallet.h"
 
@@ -99,9 +97,9 @@ HDWallet<seedSize>::HDWallet(const Data& entropy, const std::string& passphrase)
 
 template <std::size_t seedSize>
 HDWallet<seedSize>::~HDWallet() {
-    std::fill(seed.begin(), seed.end(), 0);
-    std::fill(mnemonic.begin(), mnemonic.end(), 0);
-    std::fill(passphrase.begin(), passphrase.end(), 0);
+    memzero(seed.data(), seed.size());
+    memzero(mnemonic.data(), mnemonic.size());
+    memzero(passphrase.data(), passphrase.size());
 }
 
 template <size_t seedSize>
@@ -348,7 +346,7 @@ std::string serialize(const HDNode* node, uint32_t fingerprint, uint32_t version
         node_data.insert(node_data.end(), node->private_key, node->private_key + 32);
     }
 
-    return Base58::encodeCheck(node_data, Base58Alphabet::Bitcoin, hasher);
+    return Base58::encodeCheck(node_data, Rust::Base58Alphabet::Bitcoin, hasher);
 }
 
 bool deserialize(const std::string& extended, TWCurve curve, Hash::Hasher hasher, HDNode* node) {
@@ -360,7 +358,7 @@ bool deserialize(const std::string& extended, TWCurve curve, Hash::Hasher hasher
     node->curve = get_curve_by_name(curveNameStr);
     assert(node->curve != nullptr);
 
-    const auto node_data = Base58::decodeCheck(extended, Base58Alphabet::Bitcoin, hasher);
+    const auto node_data = Base58::decodeCheck(extended, Rust::Base58Alphabet::Bitcoin, hasher);
     if (node_data.size() != 78) {
         return false;
     }

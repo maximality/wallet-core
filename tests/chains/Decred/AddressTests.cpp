@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "Decred/Address.h"
 
@@ -15,9 +13,16 @@
 namespace TW::Decred::tests {
 
 TEST(DecredAddress, FromPublicKey) {
-    const auto publicKey = PublicKey(parse_hex("0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"), TWPublicKeyTypeSECP256k1);
-    const auto address = Address(publicKey);
-    ASSERT_EQ(address.string(), "DsmcYVbP1Nmag2H4AS17UTvmWXmGeA7nLDx");
+    {
+        const auto publicKey = PublicKey(parse_hex("0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"), TWPublicKeyTypeSECP256k1);
+        const auto address = Address(publicKey);
+        ASSERT_EQ(address.string(), "DsmcYVbP1Nmag2H4AS17UTvmWXmGeA7nLDx");
+    }
+    {
+        const auto privateKey = PrivateKey(parse_hex("a1269039e4ffdf43687852d7247a295f0b5bc55e6dda031cffaa3295ca0a9d7a"));
+        const auto publicKey = PublicKey(privateKey.getPublicKey(TWPublicKeyTypeED25519));
+        EXPECT_ANY_THROW(new Address(publicKey));
+    }
 }
 
 TEST(DecredAddress, Valid) {

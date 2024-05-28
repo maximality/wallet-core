@@ -1,39 +1,23 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "Entry.h"
 
-#include "Address.h"
-#include "Signer.h"
+#include "proto/Solana.pb.h"
 
 using namespace TW;
 using namespace std;
 
 namespace TW::Solana {
 
-// Note: avoid business logic from here, rather just call into classes like Address, Signer, etc.
-
-bool Entry::validateAddress([[maybe_unused]] TWCoinType coin, const std::string& address, [[maybe_unused]] const PrefixVariant& addressPrefix) const {
-    return Address::isValid(address);
-}
-
-std::string Entry::deriveAddress([[maybe_unused]] TWCoinType coin, const PublicKey& publicKey, [[maybe_unused]] TWDerivation derivation, [[maybe_unused]] const PrefixVariant& addressPrefix) const {
-    return Address(publicKey).string();
-}
-
-Data Entry::addressToData([[maybe_unused]] TWCoinType coin, const std::string& address) const {
-    return Address(address).vector();
-}
-
-void Entry::sign([[maybe_unused]] TWCoinType coin, const TW::Data& dataIn, TW::Data& dataOut) const {
-    signTemplate<Signer, Proto::SigningInput>(dataIn, dataOut);
-}
-
-string Entry::signJSON([[maybe_unused]] TWCoinType coin, const std::string& json, const Data& key) const {
-    return Signer::signJSON(json, key);
+string Entry::signJSON(TWCoinType coin, const std::string& json, const Data& key) const {
+    return signJSONHelper<Proto::SigningInput, Proto::SigningOutput>(
+        coin,
+        json,
+        key,
+        [](const Proto::SigningOutput& output) { return output.encoded(); }
+    );
 }
 
 } // namespace TW::Solana

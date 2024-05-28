@@ -1,8 +1,6 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #pragma once
 
@@ -15,11 +13,14 @@ namespace TW::Harmony {
 class Entry final : public CoinEntry {
 public:
     bool validateAddress(TWCoinType coin, const std::string& address, const PrefixVariant& addressPrefix) const;
-     std::string deriveAddress(TWCoinType coin, const PublicKey& publicKey, TWDerivation derivation, const PrefixVariant& addressPrefix) const;
-     Data addressToData(TWCoinType coin, const std::string& address) const;
-     void sign(TWCoinType coin, const Data& dataIn, Data& dataOut) const;
-     bool supportsJSONSigning() const { return true; }
-     std::string signJSON(TWCoinType coin, const std::string& json, const Data& key) const;
+    std::string deriveAddress(TWCoinType coin, const PublicKey& publicKey, TWDerivation derivation, const PrefixVariant& addressPrefix) const;
+    Data addressToData(TWCoinType coin, const std::string& address) const;
+    void sign(TWCoinType coin, const Data& dataIn, Data& dataOut) const;
+    bool supportsJSONSigning() const { return true; }
+    std::string signJSON(TWCoinType coin, const std::string& json, const Data& key) const;
+
+    Data preImageHashes(TWCoinType coin, const Data& txInputData) const;
+    void compile(TWCoinType coin, const Data& txInputData, const std::vector<Data>& signatures, const std::vector<PublicKey>& publicKeys, Data& dataOut) const;
 };
 
 } // namespace TW::Harmony

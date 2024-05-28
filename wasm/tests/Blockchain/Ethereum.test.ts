@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 import "mocha";
 import { assert } from "chai";
@@ -99,7 +97,7 @@ describe("Ethereum", () => {
   });
 
   it("test signing personal message", () => {
-    const { HexCoding, Hash, PrivateKey, Curve } = globalThis.core;;
+    const { HexCoding, Hash, PrivateKey, Curve } = globalThis.core;
     const message = Buffer.from("Some data");
     const prefix = Buffer.from("\x19Ethereum Signed Message:\n" + message.length);
     const hash = Hash.keccak256(Buffer.concat([prefix, message]));

@@ -1,13 +1,14 @@
-// Copyright © 2017-2020 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "Aion/Address.h"
+#include "Coin.h"
 #include "HexCoding.h"
 
 #include <gtest/gtest.h>
+
+#include "TestUtilities.h"
 
 using namespace TW;
 
@@ -37,7 +38,9 @@ TEST(AionAddress, isValid) {
     std::string invalidAddress = "0xzzd2312facea71b740679c926d040c9056a65a4bfa2ddd18ec160064f82909e7";
 
     ASSERT_TRUE(Address::isValid(validAddress));
+    ASSERT_EQ(Address(parse_hex(validAddress)).string(), validAddress);
     ASSERT_FALSE(Address::isValid(invalidAddress));
+    EXPECT_EXCEPTION(Address(parse_hex(invalidAddress)), "Invalid address data");
 }
 
 } // namespace TW::Aion::tests

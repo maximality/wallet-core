@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 #include "Transaction.h"
 #include "Address.h"
@@ -45,7 +43,7 @@ std::vector<uint8_t> Transaction::serialize() {
 
 std::vector<uint8_t> Transaction::txHash() {
     auto txSerialized = Transaction::serializeUnsigned();
-    return Hash::sha256(Hash::sha256(txSerialized));
+    return Hash::sha256(Hash::sha256(Hash::sha256(txSerialized)));
 }
 
 std::vector<uint8_t> Transaction::serialize(const PublicKey& pk) {

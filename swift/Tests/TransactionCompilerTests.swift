@@ -1,8 +1,6 @@
-// Copyright © 2017-2022 Trust Wallet.
+// SPDX-License-Identifier: Apache-2.0
 //
-// This file is part of Trust. The full Trust copyright notice, including
-// terms governing use, modification, and redistribution, is contained in the
-// file LICENSE at the root of the source code distribution tree.
+// Copyright © 2017 Trust Wallet.
 
 import XCTest
 import WalletCore
@@ -172,5 +170,14 @@ class TransactionCompilerTests: XCTestCase {
         let output: BitcoinSigningOutput = try BitcoinSigningOutput(serializedData: compileWithSignatures)
         XCTAssertEqual(output.encoded.count, 518)
         XCTAssertEqual(output.encoded.hexString, ExpectedTx)
+    }
+    
+    // Test if `compileWithSignaturesAndPubKeyType` binding is available in Swift.
+    func testBitcoinCompileWithSignaturesAndPubKeyType() {
+        let txInputData = Data()
+        let signatureVec = DataVector()
+        let pubkeyVec = DataVector()
+
+        let _ = TransactionCompiler.compileWithSignaturesAndPubKeyType(coinType: .bitcoin, txInputData: txInputData, signatures: signatureVec, publicKeys: pubkeyVec, pubKeyType: .secp256k1)
     }
 }
